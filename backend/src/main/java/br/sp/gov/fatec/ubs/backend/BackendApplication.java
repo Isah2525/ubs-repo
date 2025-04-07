@@ -12,6 +12,9 @@ import br.sp.gov.fatec.ubs.backend.armazenamento.ArmazenamentoService;
 
 
 @ComponentScan("br.sp.gov.fatec.ubs.backend.armazenamento")
+@ComponentScan("br.sp.gov.fatec.ubs.backend")
+
+@ComponentScan("br.sp.gov.fatec.ubs.backend.config")
 @EnableConfigurationProperties(ArmazenamentoPropriedades.class)	
 @SpringBootApplication
 public class BackendApplication {
