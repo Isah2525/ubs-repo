@@ -9,6 +9,7 @@ import { Paciente } from '../model/paciente.model';
 
 
 export class PacienteService {
+  editarPaciente: any;
   updatePaciente(codigo: number, paciente: Paciente): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/pacientes/${codigo}`, paciente);
 }

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.sp.gov.fatec.ubs.backend.PacienteEntity;
+
 @Service
 public class ArmazenamentoSistemaDeArquivoService implements ArmazenamentoService {
 
@@ -39,7 +41,7 @@ public class ArmazenamentoSistemaDeArquivoService implements ArmazenamentoServic
     }
 
     @Override
-    public void armazenar(MultipartFile arquivo) {
+    public PacienteEntity armazenar(MultipartFile arquivo) {
         try {
             if (arquivo.isEmpty()) {
                 throw new ArmazenamentoException("Falha ao armazenar arquivo vazio " + arquivo.getOriginalFilename());
@@ -57,6 +59,7 @@ public class ArmazenamentoSistemaDeArquivoService implements ArmazenamentoServic
             System.out.println("Itext:");
             System.out.println(texto2);
             String regex = "^Ficha(.*)";
+            PacienteEntity paciente = new PacienteEntity();
             //String regex = "(.*)?[A-Za-z0-9.]+@[A-Za-z0-9]+\\.[a-zA-Z]+(\\.[A-Za-z]+)?+(\\.[A-Za-z]+)?(.*)?";
             boolean encontrou = texto2.matches(regex);
             if (encontrou) {
@@ -64,6 +67,7 @@ public class ArmazenamentoSistemaDeArquivoService implements ArmazenamentoServic
             } else {
                 System.out.println("Não encontrou email");
             }
+            return paciente;
         } catch (Exception e) {
             throw new ArmazenamentoException("Falha ao armazenar arquivo " + arquivo.getOriginalFilename(), e);
         }

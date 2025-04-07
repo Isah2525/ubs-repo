@@ -1,36 +1,70 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { HttpClient } from '@angular/common/http'
+import { ReactiveFormsModule, FormsModule } from '@angular/forms'
+import { PacienteService } from '../service/paciente.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-upload',
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.css']
+  styleUrl: './upload.component.css',
+  providers: [PacienteService]
+
 })
-export class UploadComponent {
-uploadFile() {
-throw new Error('Method not implemented.');
-}
-onFileSelected($event: Event) {
-throw new Error('Method not implemented.');
-}
-  selectedFile: File | null = null;
-  extractedData: any;
-  pacienteService: any;
 
-  constructor(private http: HttpClient) {}
+export class UploadComponent implements OnInit {
+  public form!: FormGroup;
+  file: File | null = null;
+  pacienteSelecionado: any = null;
+  mostrarModalEditar: boolean = false;
 
-  uploadFicha(codigo: number, event: any) {
-    const file: File = event.target.files[0]; // Obtém o arquivo do input
-  
+  constructor(public fb: FormBuilder, private http: HttpClient, private pacienteService: PacienteService) { }
+  ngOnInit() {
+    this.form = this.fb.group({
+      ficha: [null],
+    })
+  }
+
+  uploadFile(event: any) {
+    const file = event.target.files[0];
     if (file) {
-      this.pacienteService.uploadFicha(codigo, file).subscribe((response: { mensagem: any; }) => {
-        console.log(response.mensagem);
-        alert('Ficha enviada com sucesso!');
-      }, (error: any) => {
-        alert('Erro ao enviar a ficha.');
-      });
+      this.file = file;
     }
   }
+
+  submitForm() {
+    if (this.file) {
+      const formData = new FormData();
+      formData.append('ficha', this.file, this.file.name);
+      this.http.post('http://localhost:8091/arquivos', formData)
+        .subscribe(
+          {
+            next: (dados) => {
+              this.mostrarModalEditar = true;
+              this.pacienteSelecionado = dados;
+            },
+            error: () => {
+            },
+          })
+
+    }
+
+  }
   
+  atualizarPaciente(): void {
+    console.log('Paciente a ser atualizado:', this.pacienteSelecionado);  // Verifique se o objeto está correto
+    this.pacienteService.editarPaciente(this.pacienteSelecionado.id, this.pacienteSelecionado).subscribe({
+      next: (paciente: any) => {
+        console.log('Paciente atualizado com sucesso:', paciente);
+      },
+      error: (err: any) => {
+        console.error('Erro ao atualizar paciente:', err);
+      }
+    });
   }
 
+
+}

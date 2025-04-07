@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.sp.gov.fatec.ubs.backend.armazenamento.ArmazenamentoFileNotFoundException;
 import br.sp.gov.fatec.ubs.backend.armazenamento.ArmazenamentoService;
+import br.sp.gov.fatec.ubs.backend.PacienteEntity;
 
 @Controller
 public class TransfArquivoController {
@@ -59,11 +60,8 @@ public class TransfArquivoController {
     }
 
     @PostMapping("/arquivos")
-    public String manipularArquivo(@RequestParam("arquivos") MultipartFile arquivo, RedirectAttributes redirectAttributes) {
-        armazenamentoService.armazenar(arquivo);
-        redirectAttributes.addFlashAttribute("mensagem",
-                "Você enviou com sucesso " + arquivo.getOriginalFilename() + "!");
-
-        return "redirect:/arquivos";
+    public ResponseEntity<PacienteEntity> manipularArquivo(MultipartFile ficha) {
+        PacienteEntity paciente = armazenamentoService.armazenar(ficha);
+        return ResponseEntity.ok(paciente);
     }
 }
